@@ -13,7 +13,7 @@ public class HazardReport {
     public UUID id;   // unique report ID
 
     @Column(nullable = false)
-    public  String eventType;   // e.g., "Flood", "Cyclone", "High Waves"
+    public String eventType;   // e.g., "Flood", "Cyclone", "High Waves"
 
     @Column(nullable = false)
     public double latitude;
@@ -24,37 +24,40 @@ public class HazardReport {
     @Column(length = 2000)
     public String description;
 
-    // ✅ submittedBy is filled automatically from Authentication (citizen username)
+    // filled automatically from authenticated user
     @Column(nullable = false, updatable = false)
     public String submittedBy;
 
-    // ✅ URL pointing to media uploaded (image/video)
+    // media file path or cloud URL
     public String mediaUrl;
 
-    // ✅ status can be updated later by officials/analysts
+    // default when citizen submits
     @Column(nullable = false)
-    public String status = "PENDING"; // default when citizen submits
+    public String status = "PENDING";
 
-    // ✅ automatically set when the report is created
+    // timestamp when the report is created
     @Column(nullable = false, updatable = false)
     public LocalDateTime submittedAt = LocalDateTime.now();
 
-
+    // ----------- Constructors -----------
 
     public HazardReport() {
     }
 
-    public HazardReport(String eventType, double latitude, double longitude,
-                        String description, String submittedBy, String mediaUrl,
-                        String status, LocalDateTime submittedAt) {
+    public HazardReport(String eventType,
+                        double latitude,
+                        double longitude,
+                        String description,
+                        String submittedBy,
+                        String mediaUrl) {
         this.eventType = eventType;
         this.latitude = latitude;
         this.longitude = longitude;
         this.description = description;
         this.submittedBy = submittedBy;
         this.mediaUrl = mediaUrl;
-        this.status = status;
-        this.submittedAt = submittedAt;
+        this.status = "PENDING";
+        this.submittedAt = LocalDateTime.now();
     }
 
     // ----------- toString() -----------

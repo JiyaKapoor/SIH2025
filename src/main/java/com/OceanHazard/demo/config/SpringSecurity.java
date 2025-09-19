@@ -27,7 +27,7 @@ public class SpringSecurity {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(request -> request
-                        .requestMatchers("/citizen/**").hasRole("CITIZEN")
+                        .requestMatchers("/citizen/**").hasRole("USER")
                         .requestMatchers("/official/**").hasRole("OFFICIAL")
                         .anyRequest().permitAll())
                 .httpBasic(Customizer.withDefaults())

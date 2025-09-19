@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Citizen Hazard Dashboard</title>
+    <link rel="stylesheet" href="citizen_style.css">
+</head>
+<body>
+<div class="container">
+    <h1>🌊 Citizen Hazard Dashboard</h1>
+    <form id="loginForm">
+        <label>Username: <input type="text" id="username"></label><br>
+        <label>Password: <input type="password" id="password"></label><br>
+        <button type="submit">Login</button>
+    </form>
+
+    <div id="loginStatus"></div>
+
+
+    <!-- Submit Report -->
+    <section>
+        <h2>Submit Hazard Report</h2>
+        <form id="reportForm">
+            <label for="reportJson">Report JSON:</label>
+            <textarea id="reportJson" rows="6" placeholder='{"eventType":"Flood","latitude":12.97,"longitude":77.59,"description":"Heavy flooding"}'></textarea>
+
+            <label for="media">Attach Media (optional):</label>
+            <input type="file" id="media" name="media" accept="image/*,video/*">
+
+            <button type="submit">Submit Report</button>
+        </form>
+        <pre id="reportResponse"></pre>
+    </section>
+
+    <!-- Dashboard Feed -->
+    <section>
+        <h2>Dashboard Feed</h2>
+        <button onclick="loadFeed()">Load Feed</button>
+        <ul id="feedList"></ul>
+    </section>
+
+    <!-- Nearby Reports -->
+    <section>
+        <h2>Nearby Reports</h2>
+        <button onclick="loadNearby()">Load Nearby Reports</button>
+        <ul id="nearbyList"></ul>
+    </section>
+</div>
+
+<script src="citizen_app.js"></script>
+</body>
+</html>

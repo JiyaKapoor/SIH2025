@@ -3,6 +3,7 @@ package com.OceanHazard.demo.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -20,8 +21,14 @@ public class User {
 
     @Column(nullable = false)
     public String password;
-
-    public HashSet<String> roles=new HashSet<>();
+    // Roles stored in a separate table
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id")
+    )
+    @Column(name = "role")
+    public Set<String> roles = new HashSet<>();
 
     public LocalDateTime createdAt = LocalDateTime.now();
     public LocalDateTime updatedAt = LocalDateTime.now();

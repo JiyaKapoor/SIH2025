@@ -27,23 +27,29 @@ public class OfficialController {
     public String approveReport(@PathVariable UUID id, Authentication auth) {
         HazardReport report = hazardReportService.getReportById(id);
         if (report == null) {
-            return "Report not found!";
+            return "❌ Report not found!";
         }
-        report.status = "APPROVED";
-        hazardReportService.submitReport(report);
-        return "Report " + id + " approved by " + auth.getName();
+
+        // Update status using official workflow
+        hazardReportService.updateReportStatus(id, "APPROVED");
+
+        return "✅ Report " + id + " approved by " + auth.getName();
     }
+
 
     // ✅ Reject a report
     @PutMapping("/report/{id}/reject")
     public String rejectReport(@PathVariable UUID id, Authentication auth) {
         HazardReport report = hazardReportService.getReportById(id);
         if (report == null) {
-            return "Report not found!";
+            return "❌ Report not found!";
         }
-        report.status = "REJECTED";
-        hazardReportService.submitReport(report);
-        return "Report " + id + " rejected by " + auth.getName();
+
+        // Update status using official workflow
+        hazardReportService.updateReportStatus(id, "REJECTED");
+
+        return "✅ Report " + id + " rejected by " + auth.getName();
     }
+
 }
 
