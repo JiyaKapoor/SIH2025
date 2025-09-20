@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Analyst Dashboard</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet.js CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- Leaflet.js JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+<div class="container mx-auto p-4">
+    <div class="flex justify-between items-center mb-4">
+        <h1 id="dashboard-title" class="text-3xl font-bold">Official Dashboard</h1>
+        <div>
+            <select id="language-switcher" class="p-2 rounded border bg-white shadow">
+                <option value="en">English</option>
+                <option value="hi">हिंदी</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6 text-center">
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h2 id="stats-total-label" class="text-lg font-semibold text-gray-500">Total Reports</h2>
+            <p id="stats-total" class="text-3xl font-bold">0</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h2 id="stats-pending-label" class="text-lg font-semibold text-gray-500">Pending</h2>
+            <p id="stats-pending" class="text-3xl font-bold text-yellow-500">0</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h2 id="stats-approved-label" class="text-lg font-semibold text-gray-500">Approved</h2>
+            <p id="stats-approved" class="text-3xl font-bold text-green-500">0</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h2 id="stats-rejected-label" class="text-lg font-semibold text-gray-500">Rejected</h2>
+            <p id="stats-rejected" class="text-3xl font-bold text-red-500">0</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h2 id="stats-today-label" class="text-lg font-semibold text-gray-500">Reports Today</h2>
+            <p id="stats-today" class="text-3xl font-bold">0</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left Column: Map -->
+        <div class="lg:col-span-2 bg-white p-4 rounded-lg shadow">
+            <h2 id="hotspots-title" class="text-xl font-bold mb-2">Hazard Hotspots</h2>
+            <div id="map" style="height: 600px;"></div>
+        </div>
+
+        <!-- Right Column: Live Feed -->
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h2 id="feed-title" class="text-xl font-bold mb-2">Live Report Feed</h2>
+            <div id="feed-container" class="space-y-4 overflow-y-auto" style="height: 600px;">
+                <!-- Feed items will be injected here by JavaScript -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Your custom JS file -->
+<script src="officialView.js" defer></script>
+</body>
+</html>

@@ -2,11 +2,13 @@ package com.OceanHazard.demo.controller;
 
 import com.OceanHazard.demo.entity.HazardReport;
 import com.OceanHazard.demo.service.HazardReportService;
+import com.OceanHazard.demo.service.OfficialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -15,6 +17,8 @@ public class OfficialController {
 
     @Autowired
     private HazardReportService hazardReportService;
+    @Autowired
+    private OfficialService officialService;
 
     // ✅ View all hazard reports
     @GetMapping("/reports")
@@ -23,7 +27,7 @@ public class OfficialController {
     }
 
     // ✅ Approve a report
-    @PutMapping("/report/{id}/approve")
+    @PutMapping("/reports/{id}/approve")
     public String approveReport(@PathVariable UUID id, Authentication auth) {
         HazardReport report = hazardReportService.getReportById(id);
         if (report == null) {
@@ -38,7 +42,7 @@ public class OfficialController {
 
 
     // ✅ Reject a report
-    @PutMapping("/report/{id}/reject")
+    @PutMapping("/reports/{id}/reject")
     public String rejectReport(@PathVariable UUID id, Authentication auth) {
         HazardReport report = hazardReportService.getReportById(id);
         if (report == null) {
@@ -49,6 +53,15 @@ public class OfficialController {
         hazardReportService.updateReportStatus(id, "REJECTED");
 
         return "✅ Report " + id + " rejected by " + auth.getName();
+    }
+    @GetMapping("/stats")
+    public Map<String, Long> getDashboardStats() {
+        return officialService.getDashboardStats();
+    }
+
+    @GetMapping("/hotspots")
+    public List<Map<String, Object>> getHotspots() {
+        return officialService.getHotspots();
     }
 
 }

@@ -12,6 +12,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Service
 public class HazardReportService {
@@ -19,22 +22,26 @@ public class HazardReportService {
     @Autowired
     private HazardReportRepository hazardReportRepository;
 
-    // Save hazard with optional media
-    // Save hazard with optional media + submitting user
     public HazardReport saveHazard(HazardReport hazard, MultipartFile media, User user) throws IOException {
         if (media != null && !media.isEmpty()) {
-            hazard.mediaUrl = "/uploads/" + media.getOriginalFilename();
+            // Absolute path to "uploads" folder in project root
+            String uploadDir = System.getProperty("user.dir") + "/uploads/";
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            // Unique filename to prevent overwriting
+            String filename = System.currentTimeMillis() + "_" + media.getOriginalFilename();
+            Path filePath = uploadPath.resolve(filename);
+            System.out.println("File saved at: " + filePath.toAbsolutePath());
+            media.transferTo(filePath.toFile());
+
+            // Store URL for front-end
+            hazard.mediaUrl = "/uploads/" + filename;
         }
 
-        if (hazard.status == null) {
-            hazard.status = "PENDING";
-        }
-
-        if (hazard.submittedAt == null) {
-            hazard.submittedAt = LocalDateTime.now();
-        }
-
-        // Link report to the submitting user
+        // Associate submitting user
         hazard.submittedBy = user.username;
 
         return hazardReportRepository.save(hazard);
@@ -99,6 +106,7 @@ public class HazardReportService {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c;
     }
+
 }
 
 

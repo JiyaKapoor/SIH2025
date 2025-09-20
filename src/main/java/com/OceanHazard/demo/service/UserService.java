@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -40,12 +41,20 @@ public class UserService {
 
     // Validate credentials and return user if valid
     public User validateAndGetUser(String username, String rawPassword) {
-        User user = userRepository.findByUsername(username);
-        if (user != null && passwordEncoder.matches(rawPassword, user.password)) {
-            return user;
+        Optional<User> optUser = userRepository.findByUsername(username);
+        if (!optUser.isPresent()) {
+            throw new RuntimeException("User not found");
         }
-        return null;
+        User user = optUser.get();
+
+        // Check password using PasswordEncoder
+        if (!passwordEncoder.matches(rawPassword, user.password)) {
+            throw new RuntimeException("Invalid credentials");
+        }
+
+        return user; // <-- you must return the User
     }
+
 
     // Boolean version
     public boolean validateCredentials(String username, String rawPassword) {
