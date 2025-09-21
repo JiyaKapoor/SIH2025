@@ -111,7 +111,7 @@ async function handleLogin(event, buttonId, errorId) {
                 if (user.roles.some(role => role.toUpperCase() === "OFFICIAL")) {
                     window.location.href = 'officialView.html';
                 } else if (user.roles.some(role => role.toUpperCase() === "ANALYST")) {
-                    window.location.href = 'analystView.html';
+                    window.location.href = 'analyst.html';
                 } else if (user.roles.some(role => role.toUpperCase() === "USER")) {
                     window.location.href = 'userView.html';
                 } else {

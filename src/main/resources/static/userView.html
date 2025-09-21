@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            display: flex;
+            height: 100vh;
+            background-color: #f8f9fa; /* light background */
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background-color: #f1f3f5; /* light grey like Analyst Dashboard */
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            padding-top: 20px;
+            border-right: 1px solid #ddd;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .sidebar a {
+            padding: 15px;
+            text-decoration: none;
+            color: #2c3e50;
+            display: block;
+            transition: background 0.3s, color 0.3s;
+            font-weight: 500;
+        }
+
+        .sidebar a:hover {
+            background-color: #e9ecef;
+            color: #007bff; /* blue highlight */
+        }
+
+        /* Main content */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: gray;
+            color: black;
+            padding: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        #map {
+            flex-grow: 1;
+        }
+
+        /* Map popup style */
+        .leaflet-popup-content {
+            font-size: 14px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h2>Navigation</h2>
+    <a href="feed.html">Feed</a>
+    <a href="#">Report a Hazard</a>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="header">User Dashboard</div>
+    <div id="map"></div>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+    const API_BASE_URL = "/citizen"; // Adjust if needed
+    let map;
+
+    const initializeMap = async () => {
+        if (map) map.remove();
+        map = L.map('map').setView([20.5937, 78.9629], 5);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/hotspots`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const hotspots = await response.json();
+
+            hotspots.forEach(hotspot => {
+                if (hotspot.latitude && hotspot.longitude) {
+                    L.circle([hotspot.latitude, hotspot.longitude], {
+                        color: '#dc3545',       // Bootstrap danger red
+                        fillColor: '#dc3545',
+                        fillOpacity: 0.5,
+                        radius: hotspot.intensity * 500
+                    }).addTo(map).bindPopup(
+                        `<b style="color:#2c3e50;">Intensity: ${hotspot.intensity} reports</b>`
+                    );
+                }
+            });
+        } catch (error) {
+            console.error("Could not fetch hotspots:", error);
+        }
+    };
+
+    window.onload = initializeMap;
+</script>
+</body>
+</html>
+

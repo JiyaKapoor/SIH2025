@@ -5,6 +5,7 @@ import com.OceanHazard.demo.entity.HazardReport;
 import com.OceanHazard.demo.entity.User;
 import com.OceanHazard.demo.service.AlertService;
 import com.OceanHazard.demo.service.HazardReportService;
+import com.OceanHazard.demo.service.OfficialService;
 import com.OceanHazard.demo.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/citizen")
 public class CitizenController {
+    @Autowired
+    private OfficialService officialService;
 
     @Autowired
     private HazardReportService hazardReportService;
@@ -106,7 +109,10 @@ public class CitizenController {
 
         return hazardReportService.getReportsNearby(lat, lon, radiusKm);
     }
-
+    @GetMapping("/hotspots")
+    public List<Map<String, Object>> getHotspots() {
+        return officialService.getHotspots();
+    }
     // ---------------- Delete Report ----------------
     @DeleteMapping("/report/{id}")
     public String deleteReport(@PathVariable UUID id, Authentication auth) {

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hazard Feeds</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e9e9e9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .main-container {
+            max-width: 900px;
+            margin: 20px auto;
+            display: flex;
+            gap: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .filters-panel {
+            width: 300px;
+            background-color: #fff;
+            padding: 20px;
+            flex-shrink: 0;
+        }
+
+        .filters-panel h3 {
+            margin-top: 0;
+            font-size: 18px;
+            color: #555;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .filter-group {
+            margin-bottom: 15px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .filter-buttons button {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .apply-btn {
+            background-color: #3c5a99;
+        }
+
+        .apply-btn:hover {
+            background-color: #2b4570;
+        }
+
+        .clear-btn {
+            background-color: #8b9dc3;
+        }
+
+        .clear-btn:hover {
+            background-color: #728bb6;
+        }
+
+        .feed-container {
+            flex-grow: 1;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+
+        .feed-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .feed-card {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            transition: transform 0.2s;
+        }
+
+        .feed-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .feed-icon {
+            font-size: 24px;
+            background-color: #e7f3ff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .feed-content {
+            flex-grow: 1;
+        }
+
+        .feed-title {
+            font-weight: bold;
+            font-size: 16px;
+            color: #3c5a99;
+            margin: 0 0 5px 0;
+        }
+
+        .feed-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        #message-display {
+            text-align: center;
+            padding: 40px;
+            font-size: 16px;
+            color: #65676b;
+        }
+
+        .feed-media {
+            margin-top: 10px;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .feed-media img,
+        .feed-media video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <aside class="filters-panel">
+        <h3>Filters</h3>
+        <form id="filter-form">
+            <div class="filter-group">
+                <label for="disasterType">Disaster Type</label>
+                <select id="disasterType" name="disasterType">
+                    <option value="">All Types</option>
+                    <option value="Tsunami">Tsunami</option>
+                    <option value="Earthquake">Earthquake</option>
+                    <option value="Cyclone">Cyclone</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="latitude">Latitude</label>
+                <input type="number" step="any" id="latitude" name="latitude" placeholder="e.g., 12.9716">
+            </div>
+            <div class="filter-group">
+                <label for="longitude">Longitude</label>
+                <input type="number" step="any" id="longitude" name="longitude" placeholder="e.g., 77.5946">
+            </div>
+            <div class="filter-group">
+                <label for="radiusKm">Radius (km)</label>
+                <input type="number" id="radiusKm" name="radiusKm" placeholder="e.g., 10">
+            </div>
+            <div class="filter-group">
+                <label for="maxDaysOld">Max Days Old</label>
+                <input type="number" id="maxDaysOld" name="maxDaysOld" placeholder="e.g., 7">
+            </div>
+            <div class="filter-group">
+                <label for="date">Specific Date (YYYY-MM-DD)</label>
+                <input type="date" id="date" name="date">
+            </div>
+            <div class="filter-buttons">
+                <button type="submit" class="apply-btn">Apply Filters</button>
+                <button type="button" class="clear-btn" id="clear-filters-btn">Clear</button>
+            </div>
+        </form>
+    </aside>
+
+    <main class="feed-container">
+        <h1>Hazard Feeds</h1>
+        <div id="feed-list" class="feed-list">
+            <p id="message-display">Loading feeds...</p>
+        </div>
+    </main>
+</div>
+
+<script>
+    const API_ENDPOINT = 'http://localhost:8080/alerts/process-filters';
+
+    const filterForm = document.getElementById('filter-form');
+    const feedList = document.getElementById('feed-list');
+    const messageDisplay = document.getElementById('message-display');
+    const clearFiltersBtn = document.getElementById('clear-filters-btn');
+
+    function getIconForType(eventType) {
+        switch (eventType) {
+            case 'Tsunami': return '🌊';
+            case 'Earthquake': return '🌍';
+            case 'Cyclone': return '🌀';
+            default: return '⚠';
+        }
+    }
+
+    function extractMediaUrl(rawText) {
+        if (!rawText) return null;
+        const parts = rawText.split("Media:");
+        if (parts.length > 1) {
+            const media = parts[1].trim();
+            if (media && media.toLowerCase() !== "null") return media;
+        }
+        return null;
+    }
+
+    function parseRawText(rawText) {
+        const data = {};
+        rawText.split("|").forEach(part => {
+            const [key, ...rest] = part.split(":");
+            if (key && rest.length > 0) {
+                data[key.trim()] = rest.join(":").trim();
+            }
+        });
+        return data;
+    }
+
+    function displayReports(reports) {
+        feedList.innerHTML = '';
+        messageDisplay.style.display = 'none';
+
+        if (!reports || reports.length === 0) {
+            feedList.innerHTML = '<p id="message-display" style="display:block;">No reports found matching your criteria.</p>';
+            return;
+        }
+
+        reports.forEach(report => {
+            const card = document.createElement('div');
+            card.className = 'feed-card';
+
+            const mediaUrl = extractMediaUrl(report.rawText);
+            const parsed = parseRawText(report.rawText);
+
+            const reporterType = report.rawText && report.rawText.startsWith("[INTERNAL]")
+                ? "USER"
+                : "INCOIS";
+
+            let mediaHTML = '';
+            if (mediaUrl) {
+                if (/\.(jpg|jpeg|png)$/i.test(mediaUrl)) {
+                    mediaHTML = `<img src="${mediaUrl}" alt="Report media" class="feed-media">`;
+                } else if (mediaUrl.endsWith('.mp4')) {
+                    mediaHTML = `<video controls class="feed-media">
+                       <source src="${mediaUrl}" type="video/mp4">
+                       Your browser does not support the video tag.
+                     </video>`;
+                }
+            }
+
+            card.innerHTML = `
+                <div class="feed-icon">${getIconForType(report.classification)}</div>
+                <div class="feed-content">
+                    <h4 class="feed-title">${parsed["Event"] || report.classification || "Unknown"}
+                        <span style="font-size:0.9em; color:#555;">(${reporterType})</span>
+                    </h4>
+
+                    <div class="feed-details">
+                        ${parsed["Description"]
+                ? `<p><b>Description:</b> ${parsed["Description"]}</p>`
+                : (parsed["Status"]
+                    ? `<p><b>Description:</b> ${parsed["Status"].slice(0, 50)}...</p>`
+                    : "")}
+                        ${parsed["Status"] ? `<p><b>Status:</b> ${parsed["Status"]}</p>` : ""}
+                        ${parsed["Date"] ? `<p><b>Date:</b> ${parsed["Date"]}</p>` : ""}
+                        ${parsed["Region"] ? `<p><b>Region:</b> ${parsed["Region"]}</p>` : ""}
+                        ${parsed["Disaster"] ? `<p><b>Disaster:</b> ${parsed["Disaster"]}</p>` : ""}
+                        ${parsed["Magnitude"] ? `<p><b>Magnitude:</b> ${parsed["Magnitude"]}</p>` : ""}
+                        ${parsed["Source"] ? `<p><b>Source:</b> ${parsed["Source"]}</p>` : ""}
+                        ${parsed["Lat"] && parsed["Lon"] ? `<p><b>Location:</b> ${parsed["Lat"]}, ${parsed["Lon"]}</p>` : ""}
+                        ${parsed["By"] ? `<p><b>Reported By:</b> ${parsed["By"]}</p>` : ""}
+                    </div>
+                    ${mediaHTML}
+                </div>
+            `;
+
+            feedList.appendChild(card);
+        });
+    }
+
+    async function fetchAndDisplayReports(filterData) {
+        feedList.innerHTML = '<p id="message-display">Loading feeds...</p>';
+        messageDisplay.style.display = 'block';
+        messageDisplay.style.color = '#65676b';
+
+        try {
+            const response = await fetch(API_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(filterData)
+            });
+
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+            const reports = await response.json();
+            displayReports(reports);
+        } catch (error) {
+            console.error('Failed to fetch reports:', error);
+            messageDisplay.style.display = 'block';
+            messageDisplay.style.color = 'red';
+            messageDisplay.textContent = 'Failed to fetch reports. Please check the server and browser console for details.';
+        }
+    }
+
+    filterForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const formData = new FormData(filterForm);
+        const filterData = {};
+        for (const [key, value] of formData.entries()) {
+            if (value) {
+                if (['latitude', 'longitude', 'radiusKm', 'maxDaysOld'].includes(key)) {
+                    filterData[key] = parseFloat(value);
+                } else {
+                    filterData[key] = value;
+                }
+            }
+        }
+        fetchAndDisplayReports(filterData);
+    });
+
+    clearFiltersBtn.addEventListener('click', () => {
+        filterForm.reset();
+        fetchAndDisplayReports({});
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchAndDisplayReports({});
+    });
+</script>
+
+</body>
+</html>

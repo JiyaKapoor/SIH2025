@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
+
 @RequestMapping("/alerts")// /alerts/process-filters
 public class AlertController {
     private final AlertService alertService;
